@@ -1,7 +1,6 @@
 var React = require('react');
 
 
-
 var Part = React.createClass({
 	render: function(){
 		return (
@@ -11,6 +10,7 @@ var Part = React.createClass({
 
 });
 
+
 var Scenario = React.createClass({
 	_MAN: 4,
 	_SAVEMAN: 5,
@@ -19,6 +19,12 @@ var Scenario = React.createClass({
 	_GOAL: 8,
 	_OBJECT: 3,
 	_TREASURE: 9,
+
+	scenario_history: [],
+	x_hist : [],
+	y_hist : [],
+	move_hist: [],
+	pushes_hist: [],
 
 	stone: "app/img/halfstone.png",
 	man: "app/img/man.png",
@@ -43,12 +49,89 @@ var Scenario = React.createClass({
 
 		return {
 				scenario : matrix,
+				level: 1,
 				pos_x : x,
 				pos_y : y,
-				moves : 0
+				moves : 0,
+				pushes: 0
 			 };
 	},
 
+	copyArray: function(array){
+
+
+		var new_array = array.slice()
+		var count = 0
+
+		array.map(function(i){
+			new_array[count] = i.slice()
+			count++
+		})
+
+		return new_array;
+
+	},
+
+
+	printArray: function(array){
+		array.map(function(i){
+			console.log(i)
+		})
+	},
+
+	printHist: function(){
+		for(var i = 0; i<this.scenario_history.length;i++){
+			this.printArray(this.scenario_history[i]);
+		}
+	},
+
+	updateHistory: function(){
+		console.log('--- Update History ---')
+		var old_hist = this.copyArray(this.state.scenario)
+		var old_x = this.state.pos_x
+		var old_y = this.state.pos_y
+		var old_move = this.state.moves
+		var old_pushes = this.state.pushes
+
+		this.scenario_history.push(old_hist)
+		this.x_hist.push(old_x)
+		this.y_hist.push(old_y)
+		this.move_hist.push(old_move)
+		this.pushes_hist.push(old_pushes)
+	},
+
+
+	getLast: function(){
+		console.log('--- GetLast ---')
+
+		var scenario = this.scenario_history.pop()
+		var x = this.x_hist.pop()
+		var y = this.y_hist.pop()
+		var moves = this.move_hist.pop()
+		var pushes = this.pushes_hist.pop()
+
+
+		return {
+			scenario : scenario,
+			pos_x : x,
+			pos_y : y,
+			moves : moves,
+			pushes : pushes
+		};
+	},
+
+	undo: function(){
+		console.log('--- Undo ---')
+
+		if(this.scenario_history.length >= 1){
+
+			this.setState(this.getLast())
+			return this.forceUpdate();
+
+		}else{
+			this.showMessage('No more history');
+		}
+	},
 
 	getComponent: function(value){
 		var item;
@@ -74,10 +157,9 @@ var Scenario = React.createClass({
 	},
 
 	resetTheGame: function(message){
-
 		console.log('--- Reset ---')
-		this.getInitialState;
-		return this.forceUpdate();
+		this.setState(this.getInitialState());
+		this.state.info = '';
 	},
 
 	showMessage: function(message){
@@ -85,9 +167,6 @@ var Scenario = React.createClass({
 		console.log(message)
 		return this.forceUpdate();
 	},
-
-
-
 
 	update: function(old_x, old_y, old_piece, new_x, new_y, new_piece){
 		this.state.moves += 1;
@@ -99,18 +178,16 @@ var Scenario = React.createClass({
 	},
 
 	updatePosition: function(new_x, new_y){
-
+		this.updateHistory()
 		console.log('--- Update ---')
 		var x = this.state.pos_x;
 		var y = this.state.pos_y;
 
-		console.log('cur X: ' + this.state.pos_x + ", cur Y: " + this.state.pos_y)
+
 
 
 		var piece = this.state.scenario[new_x][new_y]
 		var current = this.state.scenario[x][y]
-		console.log('current: ' + current)
-		console.log('piece: ' + piece)
 
 
 		if(current ==  this._SAVEMAN && piece ==  this._GOAL){
@@ -127,6 +204,7 @@ var Scenario = React.createClass({
 			this.showMessage(message)
 
 		}else if(piece ==  this._OBJECT){
+
 
 			var test_x = new_x - x;
 			var test_y = new_y - y;
@@ -153,12 +231,12 @@ var Scenario = React.createClass({
 			if(next_piece != this._STONE){
 				this.update(new_x, new_y, this._MAN, next_x, next_y, this._OBJECT)
 				this.update(x, y, this._BLANK, new_x, new_y, this._MAN)
+				this.state.pushes += 1;
 			}
 			if(next_piece == this._GOAL){
 				this.update(new_x, new_y, this._MAN, next_x, next_y, this._TREASURE)
 				this.update(x, y, this._BLANK, new_x, new_y, this._MAN)
 			}
-
 
 		}else if(piece ==  this._GOAL){
 			this.update(x, y, this._BLANK, new_x, new_y, this._SAVEMAN)
@@ -170,7 +248,7 @@ var Scenario = React.createClass({
 	},
 
 	moveUP: function(){
-
+		this.state.info = ''
 		console.log('--- moveUP ---')
 		var x = this.state.pos_x;
 		var y = this.state.pos_y;
@@ -209,17 +287,26 @@ var Scenario = React.createClass({
 
 		return (
 			<div>
-				<div className='Moves'>Moves Number: {this.state.moves}</div>
-				<table>{
+				<div>
+					<h1 className='title'>Sokoban</h1>
+				</div>
+				<div className='info'>
+					<span className='info_title'>Level: </span>
+					<span className='info_value'>{this.state.level}</span>
+
+					<span className='info_title'>Moves: </span>
+					<span className='info_value'>{this.state.moves}</span>
+
+					<span className='info_title'>Pushes: </span>
+					<span className='info_value'>{this.state.pushes}</span>
+				</div>
+				<br/>
+				<table className='scenario'>{
 						this.state.scenario.map(function(line, i){
 
 							return (
 								<tr key={i}>{
 									line.map(function(column, j){
-										// console.log('x = ' + i)
-										// console.log('y = ' + j)
-										// console.log('[x,y] = ' + this.state.scenario[i][j])
-
 										return (
 											<td key={i + "" + j}>
 												{this.getComponent(column)}
@@ -230,14 +317,16 @@ var Scenario = React.createClass({
 							);
 						}.bind(this))
 				}</table>
+				<br/>
 				<div className='buttons'>
 					<input type='button' value='up' onClick={this.moveUP}/><br/>
 					<input type='button' value='Left' onClick={this.moveLeft}/>
 					<input type='button' value='Right' onClick={this.moveRight}/><br/>
 					<input type='button' value='Down' onClick={this.moveDown}/><br/><br/>
 					<input type='button' value='Reset' onClick={this.resetTheGame}/>
+					<input type='button' value='Undo' onClick={this.undo}/>
 				</div>
-				<div className='info'>{this.state.info}</div>
+				<div className='message'>{this.state.info}</div>
 			</div>
 		)
 
