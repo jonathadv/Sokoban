@@ -86,15 +86,6 @@ var Scenario = React.createClass({
 		}
 	},
 
-
-	preLoadImg: function(){
-		console.log('--- preLoadImg ---')
-		Image1 = new Image(96,96)
-		Image1.src = "app/img/saveman.png"
-		Image2 = new Image(96,96)
-		Image2.src = "app/img/treasure.png"
-	},
-
 	updateHistory: function(){
 		console.log('--- Update History ---')
 		var old_hist = this.copyArray(this.state.scenario)
