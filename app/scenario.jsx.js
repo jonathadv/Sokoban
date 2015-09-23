@@ -20,11 +20,6 @@ var Scenario = React.createClass({
 	_OBJECT: 3,
 	_TREASURE: 9,
 
-	scenario_history: [],
-	x_hist : [],
-	y_hist : [],
-	move_hist: [],
-	pushes_hist: [],
 
 	stone: "app/img/halfstone.png",
 	man: "app/img/man.png",
@@ -53,7 +48,14 @@ var Scenario = React.createClass({
 				pos_x : x,
 				pos_y : y,
 				moves : 0,
-				pushes: 0
+				pushes: 0,
+
+				scenario_history: [],
+				x_hist : [],
+				y_hist : [],
+				move_hist: [],
+				pushes_hist: []
+
 			 };
 	},
 
@@ -93,22 +95,22 @@ var Scenario = React.createClass({
 		var old_move = this.state.moves
 		var old_pushes = this.state.pushes
 
-		this.scenario_history.push(old_hist)
-		this.x_hist.push(old_x)
-		this.y_hist.push(old_y)
-		this.move_hist.push(old_move)
-		this.pushes_hist.push(old_pushes)
+		this.state.scenario_history.push(old_hist)
+		this.state.x_hist.push(old_x)
+		this.state.y_hist.push(old_y)
+		this.state.move_hist.push(old_move)
+		this.state.pushes_hist.push(old_pushes)
 	},
 
 
 	getLast: function(){
 		console.log('--- GetLast ---')
 
-		var scenario = this.scenario_history.pop()
-		var x = this.x_hist.pop()
-		var y = this.y_hist.pop()
-		var moves = this.move_hist.pop()
-		var pushes = this.pushes_hist.pop()
+		var scenario = this.state.scenario_history.pop()
+		var x = this.state.x_hist.pop()
+		var y = this.state.y_hist.pop()
+		var moves = this.state.move_hist.pop()
+		var pushes = this.state.pushes_hist.pop()
 
 
 		return {
@@ -123,7 +125,7 @@ var Scenario = React.createClass({
 	undo: function(){
 		console.log('--- Undo ---')
 
-		if(this.scenario_history.length >= 1){
+		if(this.state.scenario_history.length >= 1){
 
 			this.setState(this.getLast())
 			return this.forceUpdate();
