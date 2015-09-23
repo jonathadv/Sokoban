@@ -61,6 +61,41 @@ th, td {
     text-align: center;
 }
 
+.scoreTitle{
+    border: 0px;
+    color: red;
+    background: #ffffff;
+    line-height: 1;
+    width: 300px;
+    height: 30px;
+}
+
+.scoreItem{
+    border: 0px;
+    background: #ffffff;
+    line-height: 1;
+    width: 300px;
+    height: 30px;
+}
+
+.scoreBoard{
+    border: 0px solid black;
+    text-align: center;
+    background: #ffffff;
+    color: #000000;
+    font-size: 25px;
+    line-height: 2;
+    width: 400px;
+}
+
+.popup {
+  width:100px;
+  height:100px;
+  position:absolute;
+  display:none;
+  
+}
+
 body {
     /*background-image: url("../img/starfield.png");*/
     background: #404040;

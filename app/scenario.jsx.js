@@ -1,13 +1,14 @@
 var React = require('react');
+var ScoreBoard = require('./score.jsx');
 
 
-var Part = React.createClass({
+
+var Piece = React.createClass({
 	render: function(){
 		return (
 				<img src={this.props.value}/>
 			);
 	}
-
 });
 
 
@@ -30,6 +31,7 @@ var Scenario = React.createClass({
 
 
 	getInitialState: function(){
+
 		var matrix = [
 			          [1,1,1,1,1,1,1,1],
 		              [1,8,8,3,0,3,0,1],
@@ -101,9 +103,19 @@ var Scenario = React.createClass({
 		this.state.pushes_hist.push(old_pushes)
 	},
 
+	showScore: function(){
+		document.getElementById('popup').style.display = "block";
+		document.getElementById('popup').style.top = "100px";
+		document.getElementById('popup').style.left = "40%";
+	},
+
+	hideScore: function(){
+		document.getElementById('popup').style.display = "none";
+		document.getElementById('popup').style.top = "100px";
+		document.getElementById('popup').style.left = "40%";
+	},
 
 	getLast: function(){
-		console.log('--- GetLast ---')
 
 		var scenario = this.state.scenario_history.pop()
 		var x = this.state.x_hist.pop()
@@ -154,14 +166,16 @@ var Scenario = React.createClass({
 		}
 
 
-		return <Part value={item}/>
+		return <Piece value={item}/>
 	},
 
 	resetTheGame: function(message){
 		console.log('--- Reset ---')
 		this.setState(this.getInitialState());
 		this.state.info = '';
+		this.hideScore();
 	},
+
 
 	showMessage: function(message){
 		this.state.info = message;
@@ -183,9 +197,6 @@ var Scenario = React.createClass({
 		console.log('--- Update ---')
 		var x = this.state.pos_x;
 		var y = this.state.pos_y;
-
-
-
 
 		var piece = this.state.scenario[new_x][new_y]
 		var current = this.state.scenario[x][y]
@@ -327,14 +338,18 @@ var Scenario = React.createClass({
 					<input type='button' value='Right' onClick={this.moveRight}/><br/>
 					<input type='button' value='Down' onClick={this.moveDown}/><br/><br/>
 					<input type='button' value='Reset' onClick={this.resetTheGame}/>
-					<input type='button' value='Undo' onClick={this.undo}/>
+					<input type='button' value='Undo' onClick={this.undo}/><br/><br/>
+					<input type='button' value='Show Score' onClick={this.showScore}/>
 				</div>
 				<div className='message'>{this.state.info}</div>
+				<br/><br/>
+				<div className='popup' id='popup'><ScoreBoard align='center'/></div>
+				<br/><br/>
 			</div>
 		)
 
 	}
 });
 
-//export default Person;
+//export default
 export default Scenario;
