@@ -68,3 +68,11 @@ body {
     font-size: 20px;
     line-height: 1.4;
 }
+
+
+div#preload1 {
+	background: url(../img/saveman.png) no-repeat -9999px -9999px;
+	}
+div#preload2 {
+	background: url(../img/treasure.png) no-repeat -9999px -9999px;
+	}

@@ -20,7 +20,6 @@ var Scenario = React.createClass({
 	_OBJECT: 3,
 	_TREASURE: 9,
 
-
 	stone: "app/img/halfstone.png",
 	man: "app/img/man.png",
 	saveman: "app/img/saveman.png",
@@ -85,6 +84,15 @@ var Scenario = React.createClass({
 		for(var i = 0; i<this.scenario_history.length;i++){
 			this.printArray(this.scenario_history[i]);
 		}
+	},
+
+
+	preLoadImg: function(){
+		console.log('--- preLoadImg ---')
+		Image1 = new Image(96,96)
+		Image1.src = "app/img/saveman.png"
+		Image2 = new Image(96,96)
+		Image2.src = "app/img/treasure.png"
 	},
 
 	updateHistory: function(){
@@ -289,6 +297,8 @@ var Scenario = React.createClass({
 
 		return (
 			<div>
+			<div id='preload1'/>
+			<div id='preload2'/>
 				<div>
 					<h1 className='title'>Sokoban</h1>
 				</div>
