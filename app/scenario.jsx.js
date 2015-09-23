@@ -82,10 +82,26 @@ var Scenario = React.createClass({
 		})
 	},
 
-	printHist: function(){
-		for(var i = 0; i<this.scenario_history.length;i++){
-			this.printArray(this.scenario_history[i]);
+	getComponent: function(value){
+		var item;
+
+		if(value == 0){
+			item = this.blank
+		}else if(value == 1){
+			item = this.stone
+		}else if(value == 3){
+			item = this.object
+		}else if(value == 4){
+			item = this.man
+		}else if(value == 5){
+			item = this.saveman
+		}else if(value == 8){
+			item = this.goal
+		}else if(value == 9){
+			item = this.treasure
 		}
+
+		return <Piece value={item}/>
 	},
 
 	updateHistory: function(){
@@ -103,19 +119,7 @@ var Scenario = React.createClass({
 		this.state.pushes_hist.push(old_pushes)
 	},
 
-	showScore: function(){
-		document.getElementById('popup').style.display = "block";
-		document.getElementById('popup').style.top = "100px";
-		document.getElementById('popup').style.left = "40%";
-	},
-
-	hideScore: function(){
-		document.getElementById('popup').style.display = "none";
-		document.getElementById('popup').style.top = "100px";
-		document.getElementById('popup').style.left = "40%";
-	},
-
-	getLast: function(){
+	getLastState: function(){
 
 		var scenario = this.state.scenario_history.pop()
 		var x = this.state.x_hist.pop()
@@ -138,35 +142,12 @@ var Scenario = React.createClass({
 
 		if(this.state.scenario_history.length >= 1){
 
-			this.setState(this.getLast())
+			this.setState(this.getLastState())
 			return this.forceUpdate();
 
 		}else{
 			this.showMessage('No more history');
 		}
-	},
-
-	getComponent: function(value){
-		var item;
-
-		if(value == 0){
-			item = this.blank
-		}else if(value == 1){
-			item = this.stone
-		}else if(value == 3){
-			item = this.object
-		}else if(value == 4){
-			item = this.man
-		}else if(value == 5){
-			item = this.saveman
-		}else if(value == 8){
-			item = this.goal
-		}else if(value == 9){
-			item = this.treasure
-		}
-
-
-		return <Piece value={item}/>
 	},
 
 	resetTheGame: function(message){
@@ -176,20 +157,93 @@ var Scenario = React.createClass({
 		this.hideScore();
 	},
 
-
 	showMessage: function(message){
 		this.state.info = message;
 		console.log(message)
 		return this.forceUpdate();
 	},
 
-	update: function(old_x, old_y, old_piece, new_x, new_y, new_piece){
-		this.state.moves += 1;
-
+	update: function(new_x, new_y, new_piece){
 		this.state.scenario[new_x][new_y] = new_piece
-		this.state.scenario[old_x][old_y] = old_piece
-		this.state.pos_x = new_x
-		this.state.pos_y = new_y
+	},
+
+	updateManXY: function(x, y){
+		this.state.pos_x = x
+		this.state.pos_y = y
+		this.state.moves += 1;
+	},
+
+	pushObject: function(new_man_x, new_man_y){
+		// Get the current man position
+		var x = this.state.pos_x;
+		var y = this.state.pos_y;
+
+		// Check the object's and man's next position
+		var test_x = new_man_x - x;
+		var test_y = new_man_y - y;
+		var new_obj_x, new_obj_y;
+
+		if(test_x == 0){
+			new_obj_x = new_man_x
+		}else if(test_x > 0){
+			new_obj_x = new_man_x + 1
+		}else{
+			new_obj_x = new_man_x - 1
+		}
+
+		if(test_y == 0){
+			new_obj_y = new_man_y
+		}else if(test_y > 0){
+			new_obj_y = new_man_y + 1
+		}else{
+			new_obj_y = new_man_y - 1
+		}
+
+
+		var current_man_piece = this.state.scenario[x][y]
+		var new_man_piece = this.state.scenario[new_man_x][new_man_y]
+		var next_piece = this.state.scenario[new_obj_x][new_obj_y]
+
+
+		if(next_piece == this._BLANK){
+
+			if(current_man_piece == this._SAVEMAN){
+				if(new_man_piece == this._TREASURE){
+					this.update(x, y, this._GOAL)
+					this.update(new_man_x, new_man_y, this._SAVEMAN)
+				}else{
+					this.update(x, y, this._GOAL)
+					this.update(new_man_x, new_man_y, this._MAN)
+				}
+
+			}else{
+				this.update(x, y, this._BLANK)
+				this.update(new_man_x, new_man_y, this._MAN)
+			}
+
+
+			this.update(new_obj_x, new_obj_y, this._OBJECT)
+			this.updateManXY(new_man_x, new_man_y)
+			this.state.pushes += 1;
+		}
+
+		if(next_piece == this._GOAL){
+
+			if(new_man_piece == this._TREASURE){
+				this.update(new_man_x, new_man_y, this._SAVEMAN)
+				this.update(x, y, this._BLANK)
+				this.update(new_obj_x, new_obj_y, this._TREASURE)
+
+			}else{
+				this.update(new_man_x, new_man_y, this._MAN)
+				this.update(x, y, this._BLANK)
+				this.update(new_obj_x, new_obj_y, this._TREASURE)
+			}
+			this.updateManXY(new_man_x, new_man_y)
+
+			this.state.pushes += 1;
+		}
+
 	},
 
 	updatePosition: function(new_x, new_y){
@@ -203,56 +257,31 @@ var Scenario = React.createClass({
 
 
 		if(current ==  this._SAVEMAN && piece ==  this._GOAL){
-			this.update(x, y, this._GOAL, new_x, new_y, this._SAVEMAN)
+			this.update(x, y, this._GOAL)
+			this.update(new_x, new_y, this._SAVEMAN)
+			this.updateManXY(new_x, new_y)
 
 		}else if(current ==  this._SAVEMAN && piece ==  this._BLANK){
-			this.update(x, y, this._GOAL, new_x, new_y, this._MAN)
+			this.update(x, y, this._GOAL)
+			this.update(new_x, new_y, this._MAN)
+			this.updateManXY(new_x, new_y)
 
 		}else if(piece ==  this._BLANK){
-			this.update(x, y, piece, new_x, new_y, this._MAN)
+			this.update(x, y, piece)
+			this.update(new_x, new_y, this._MAN)
+			this.updateManXY(new_x, new_y)
 
 		}else if(piece ==  this._STONE){
 			var message = 'You can not go through the stone.';
 			this.showMessage(message)
 
-		}else if(piece ==  this._OBJECT){
-
-
-			var test_x = new_x - x;
-			var test_y = new_y - y;
-			var next_x, next_y;
-
-			if(test_x == 0){
-				next_x = new_x
-			}else if(test_x > 0){
-				next_x = new_x + 1
-			}else{
-				next_x = new_x - 1
-			}
-
-			if(test_y == 0){
-				next_y = new_y
-			}else if(test_y > 0){
-				next_y = new_y + 1
-			}else{
-				next_y = new_y - 1
-			}
-
-			var next_piece = this.state.scenario[next_x][next_y]
-
-			if(next_piece != this._STONE){
-				this.update(new_x, new_y, this._MAN, next_x, next_y, this._OBJECT)
-				this.update(x, y, this._BLANK, new_x, new_y, this._MAN)
-				this.state.pushes += 1;
-			}
-			if(next_piece == this._GOAL){
-				this.update(new_x, new_y, this._MAN, next_x, next_y, this._TREASURE)
-				this.update(x, y, this._BLANK, new_x, new_y, this._MAN)
-			}
+		}else if(piece ==  this._OBJECT || piece == this._TREASURE){
+			this.pushObject(new_x, new_y)
 
 		}else if(piece ==  this._GOAL){
-			this.update(x, y, this._BLANK, new_x, new_y, this._SAVEMAN)
-
+			this.update(x, y, this._BLANK)
+			this.update(new_x, new_y, this._SAVEMAN)
+			this.updateManXY(new_x, new_y)
 		}
 
 		return this.forceUpdate();
@@ -293,6 +322,18 @@ var Scenario = React.createClass({
 		var y = this.state.pos_y;
 
 		this.updatePosition(x, y-1);
+	},
+
+	showScore: function(){
+		document.getElementById('popup').style.display = "block";
+		document.getElementById('popup').style.top = "100px";
+		document.getElementById('popup').style.left = "40%";
+	},
+
+	hideScore: function(){
+		document.getElementById('popup').style.display = "none";
+		document.getElementById('popup').style.top = "100px";
+		document.getElementById('popup').style.left = "40%";
 	},
 
 	render: function(){
@@ -343,7 +384,7 @@ var Scenario = React.createClass({
 				</div>
 				<div className='message'>{this.state.info}</div>
 				<br/><br/>
-				<div className='popup' id='popup'><ScoreBoard align='center'/></div>
+				<div className='popup' id='popup'><ScoreBoard align='center' value={this.state.pushes}/></div>
 				<br/><br/>
 			</div>
 		)

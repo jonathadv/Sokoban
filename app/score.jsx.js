@@ -4,7 +4,7 @@ var ScoreBoard = React.createClass({
 
 	getInitialState: function(){
 		return{
-			playerList: ['Seu Brarriga', 'Seu Madruga'],
+			playerList: [['Seu Brarriga', 10], ['Seu Madruga',5]],
 			newPlayer: ''
 		}
 	},
@@ -17,8 +17,7 @@ var ScoreBoard = React.createClass({
 
 	handleSubmit: function(){
 		if(this.state.newPlayer.length > 0){
-			var nextItems = this.state.playerList.concat([this.state.newPlayer]);
-			console.log(nextItems)
+			var nextItems = this.state.playerList.concat([[this.state.newPlayer, this.props.value]]);
 
 			this.state.playerList = nextItems;
 			this.state.newPlayer = '';
@@ -44,8 +43,8 @@ var ScoreBoard = React.createClass({
 						function(item, i){
 							return(
 								<tr>
-									<td className='scoreItem' key={'a'+ i}>{item}</td>
-									<td className='scoreItem' key={'b'+ i}>10</td>
+									<td className='scoreItem' key={'a'+ i}>{item[0]}</td>
+									<td className='scoreItem' key={'b'+ i}>{item[1]}</td>
 								</tr>
 							)})
 
