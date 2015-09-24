@@ -198,7 +198,11 @@ var Scenario = React.createClass({
 		this.state.scenario[new_x][new_y] = new_piece
 
 		if(this.hasWon()){
-			this.showScore();
+
+			setTimeout(function() {
+  				this.showScore();
+			}.bind(this), 500);
+
 		}
 	},
 
