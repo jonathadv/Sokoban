@@ -14,7 +14,7 @@
 }
 
 .piece {
-    border: 1px solid black;
+    border: 0px solid black;
     padding: 0px;
     width: 10px;
     height: 10px;
