@@ -356,22 +356,23 @@ var Scenario = React.createClass({
 					<span className='info_value'>{this.state.pushes}</span>
 				</div>
 				<br/>
-				<table className='scenario'>{
-						this.state.scenario.map(function(line, i){
-
-							return (
-								<tr key={i}>{
-									line.map(function(column, j){
-										return (
-											<td key={i + "" + j}>
-												{this.getComponent(column)}
-											</td>
-										);
-									}.bind(this))
-								}</tr>
-							);
-						}.bind(this))
-				}</table>
+				<div className='scenario'>
+					<table className='canvas'>{
+							this.state.scenario.map(function(line, i){
+								return (
+									<tr key={i} className='piece'>{
+										line.map(function(column, j){
+											return (
+												<td key={i + "" + j} className='piece'>
+													{this.getComponent(column)}
+												</td>
+											);
+										}.bind(this))
+									}</tr>
+								);
+							}.bind(this))
+					}</table>
+				</div>
 				<br/>
 				<div className='buttons'>
 					<input type='button' value='up' onClick={this.moveUP}/><br/>
