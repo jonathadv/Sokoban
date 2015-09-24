@@ -32,6 +32,8 @@ var Scenario = React.createClass({
 
 	getInitialState: function(){
 
+		this.enableScoreInputName();
+
 		var matrix = [
 			          [1,1,1,1,1,1,1,1],
 		              [1,8,8,3,0,3,0,1],
@@ -41,23 +43,34 @@ var Scenario = React.createClass({
 				  ];
 		var x = 3;
 		var y = 6;
+		var win = [[1,1],[1,2],[2,1]];
+
 
 
 		return {
 				scenario : matrix,
-				level: 1,
+				level : 1,
 				pos_x : x,
 				pos_y : y,
 				moves : 0,
 				pushes: 0,
+				win : win,
 
-				scenario_history: [],
+				scenario_history : [],
 				x_hist : [],
 				y_hist : [],
-				move_hist: [],
-				pushes_hist: []
+				move_hist : [],
+				pushes_hist : []
 
 			 };
+	},
+
+	enableScoreInputName : function(){
+		if(document.getElementById('inputPlayer')){
+			document.getElementById('inputPlayer').value=''
+			document.getElementById('inputPlayer').style=""
+			document.getElementById('inputPlayerButton').style=""
+		}
 	},
 
 	copyArray: function(array){
@@ -137,6 +150,24 @@ var Scenario = React.createClass({
 		};
 	},
 
+	hasWon(){
+		var scenario = this.state.scenario;
+		var treasure = this._TREASURE;
+		var win = this.state.win;
+
+		for(var i = 0; i < win.length; i++){
+			var coord = win[i]
+			var x = coord[0]
+			var y = coord[1]
+
+			if(scenario[x][y] != treasure){
+				return false;
+			}
+		}
+
+		return true;
+	},
+
 	undo: function(){
 		console.log('--- Undo ---')
 
@@ -165,6 +196,10 @@ var Scenario = React.createClass({
 
 	update: function(new_x, new_y, new_piece){
 		this.state.scenario[new_x][new_y] = new_piece
+
+		if(this.hasWon()){
+			this.showScore();
+		}
 	},
 
 	updateManXY: function(x, y){
@@ -325,15 +360,21 @@ var Scenario = React.createClass({
 	},
 
 	showScore: function(){
-		document.getElementById('popup').style.display = "block";
-		document.getElementById('popup').style.top = "100px";
-		document.getElementById('popup').style.left = "40%";
-	},
+		var popup = document.getElementById('popup');
+		var score = document.getElementById('showScore');
 
-	hideScore: function(){
-		document.getElementById('popup').style.display = "none";
-		document.getElementById('popup').style.top = "100px";
-		document.getElementById('popup').style.left = "40%";
+		if(popup.style.display == "none" ||
+		   popup.style.display == ""){
+
+			console.log('aqui')
+			popup.style.display = "block";
+			score.value = "Hide Score";
+
+		}else{
+			popup.style.display = "none";
+			score.value = "Show score";
+		}
+
 	},
 
 	render: function(){
@@ -381,7 +422,7 @@ var Scenario = React.createClass({
 					<input type='button' value='Down' onClick={this.moveDown}/><br/><br/>
 					<input type='button' value='Reset' onClick={this.resetTheGame}/>
 					<input type='button' value='Undo' onClick={this.undo}/><br/><br/>
-					<input type='button' value='Show Score' onClick={this.showScore}/>
+					<input type='button' id='showScore' value='Show Score' onClick={this.showScore}/>
 				</div>
 				<div className='message'>{this.state.info}</div>
 				<br/><br/>
