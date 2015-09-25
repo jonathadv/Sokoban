@@ -33,42 +33,44 @@ var Scenario = React.createClass({
 
 	getInitialState: function(){
 
-		this.enableScoreInputName();
+		this.startListener();
 
-		var matrix1 = [
-			          [1,1,1,1,1,1,1,1],
-		              [1,8,8,3,0,3,0,1],
-					  [1,8,0,3,0,0,0,1],
-					  [1,0,1,0,0,0,4,1],
-					  [1,1,1,1,1,1,1,1]
-				  ];
+		var currentLevel = 0;
 
-		var matrix2 = [
-						[7,7,7,1,1,1,7,7,7,7,7],
-						[7,7,1,1,0,1,7,1,1,1,1],
-						[7,1,1,0,0,1,1,1,0,0,1],
-						[1,1,0,3,0,0,0,0,0,0,1],
-						[1,0,0,0,4,3,0,1,0,0,1],
-						[1,1,1,0,3,1,1,1,0,0,1],
-						[7,7,1,0,0,1,8,8,0,0,1],
-						[7,1,1,0,1,1,8,1,0,1,1],
-						[7,1,0,0,0,0,0,0,1,1,7],
-						[7,1,0,0,0,0,0,1,1,7,7],
-						[7,1,1,1,1,1,1,1,7,7,7]
-		    		];
+		var Levels = [
+						[
+				    		[1,1,1,1,1,1,1,1],
+				    		[1,8,8,3,0,3,0,1],
+				    		[1,8,0,3,0,0,0,1],
+				    		[1,0,1,0,0,0,4,1],
+				    		[1,1,1,1,1,1,1,1]
+				    		],
+				    	[
+							[7,7,7,1,1,1,7,7,7,7,7],
+							[7,7,1,1,0,1,7,1,1,1,1],
+							[7,1,1,0,0,1,1,1,0,0,1],
+							[1,1,0,3,0,0,0,0,0,0,1],
+							[1,0,0,0,4,3,0,1,0,0,1],
+							[1,1,1,0,3,1,1,1,0,0,1],
+							[7,7,1,0,0,1,8,8,0,0,1],
+							[7,1,1,0,1,1,8,1,0,1,1],
+							[7,1,0,0,0,0,0,0,1,1,7],
+							[7,1,0,0,0,0,0,1,1,7,7],
+							[7,1,1,1,1,1,1,1,7,7,7]
+		    			]
+					];
 
 
-		var levelProps = this.scanLevel(matrix1);
-		console.log(levelProps);
+		var levelProps = this.scanLevel(Levels[currentLevel]);
 		var x = levelProps.man_x;
 		var y = levelProps.man_y;
 		var win = levelProps.game_win;
-		var level = levelProps.level;
-
+		var scenarioLevel = levelProps.level;
 
 		return {
-				scenario : level,
-				level : 1,
+				levelList : Levels,
+				scenario : scenarioLevel,
+				level : currentLevel,
 				pos_x : x,
 				pos_y : y,
 				moves : 0,
@@ -112,9 +114,49 @@ var Scenario = React.createClass({
 		        }
 	},
 
-	getLevel: function(){
+	nextLevel: function(){
+		console.log('--- nextLevel ---')
+		this.hideScore();
+		var next_level = this.state.level += 1;
+		if(next_level >= this.state.levelList.length){
 
+			this.showMessage('No more levels.');
+
+			return false;
+		}
+
+		var currentLevel = this.state.levelList[next_level]
+		var levelProps = this.scanLevel(currentLevel);
+		var x = levelProps.man_x;
+		var y = levelProps.man_y;
+		var win = levelProps.game_win;
+		var scenarioLevel = levelProps.level;
+
+
+		this.setState(function(){
+
+			return {
+					levelList : this.state.levelList,
+					scenario : scenarioLevel,
+					level : next_level,
+					pos_x : x,
+					pos_y : y,
+					moves : 0,
+					pushes: 0,
+					win : win,
+
+					scenario_history : [],
+					x_hist : [],
+					y_hist : [],
+					move_hist : [],
+					pushes_hist : []
+
+				};
+			});
+
+			return this.forceUpdate();
 	},
+
 
 	enableScoreInputName : function(){
 		if(document.getElementById('inputPlayer')){
@@ -240,6 +282,37 @@ var Scenario = React.createClass({
 		this.setState(this.getInitialState());
 		this.state.info = '';
 		this.hideScore();
+	},
+
+	startListener: function(){
+		document.onkeydown = function(e) {
+			switch (e.keyCode) {
+		        case 37:
+		            this.moveLeft();
+		            break;
+		        case 38:
+		            this.moveUP();
+		            break;
+		        case 39:
+		            this.moveRight();
+		            break;
+		        case 40:
+		            this.moveDown();
+		            break;
+				case 27:
+					this.undo();
+					break;
+				case 82:
+					this.resetTheGame();
+					break;
+				case 78:
+					this.nextLevel();
+					break;
+				case 66:
+					this.showMessage('Not implemented. :)');
+					break;
+		    }
+		}.bind(this);
 	},
 
 	showMessage: function(message){
@@ -476,12 +549,12 @@ var Scenario = React.createClass({
 				</div>
 				<br/>
 				<div className='buttons'>
-					<input type='button' value='up' onClick={this.moveUP}/><br/>
-					<input type='button' value='Left' onClick={this.moveLeft}/>
-					<input type='button' value='Right' onClick={this.moveRight}/><br/>
-					<input type='button' value='Down' onClick={this.moveDown}/><br/><br/>
-					<input type='button' value='Reset' onClick={this.resetTheGame}/>
-					<input type='button' value='Undo' onClick={this.undo}/><br/><br/>
+
+					<input type='button' value='Reset'title='Key: [ R ]' onClick={this.resetTheGame}/>
+					<input type='button' value='Undo' title='Key: [Esc]' onClick={this.undo}/><br/><br/>
+					<input type='button' value='Previus' title='Key: [ B ]' onClick={this.nextLevel}/>
+					<input type='button' value='Next' title='Key: [ N ]' onClick={this.nextLevel}/><br/><br/>
+
 				</div>
 				<div className='message'>{this.state.info}</div>
 				<br/><br/>
