@@ -21,13 +21,13 @@ var Scenario = React.createClass({
 	_OBJECT: 3,
 	_TREASURE: 9,
 
-	stone: "app/img/halfstone.png",
-	man: "app/img/man.png",
-	saveman: "app/img/saveman.png",
-	object: "app/img/object.png",
-	treasure:  "app/img/treasure.png",
-	blank:  "app/img/blank.png",
-	goal:   "app/img/goal.png",
+	stone: "sokoban/img/halfstone.png",
+	man: "sokoban/img/man.png",
+	saveman: "sokoban/img/saveman.png",
+	object: "sokoban/img/object.png",
+	treasure:  "sokoban/img/treasure.png",
+	blank:  "sokoban/img/blank.png",
+	goal:   "sokoban/img/goal.png",
 
 
 	getInitialState: function(){
@@ -355,31 +355,33 @@ var Scenario = React.createClass({
 	},
 
 	moveLeft: function(){
-		this.state.info = ''
 		console.log('--- moveLeft ---')
+		this.state.info = ''
 		var x = this.state.pos_x;
 		var y = this.state.pos_y;
 
 		this.updatePosition(x, y-1);
 	},
 
-	showScore: function(){
+	hideScore: function(){
+		console.log('--- hideScore ---')
+
 		var popup = document.getElementById('popup');
 		var score = document.getElementById('showScore');
 
-		if(popup.style.display == "none" ||
-		   popup.style.display == ""){
-
-			console.log('aqui')
-			popup.style.display = "block";
-			score.value = "Hide Score";
-
-		}else{
-			popup.style.display = "none";
-			score.value = "Show score";
-		}
-
+		popup.style.display = "none";
 	},
+
+	showScore: function(){
+		console.log('--- showScore ---')
+
+		var popup = document.getElementById('popup');
+		var score = document.getElementById('showScore');
+
+		popup.style.display =  "block";
+	},
+
+
 
 	render: function(){
 
@@ -426,7 +428,6 @@ var Scenario = React.createClass({
 					<input type='button' value='Down' onClick={this.moveDown}/><br/><br/>
 					<input type='button' value='Reset' onClick={this.resetTheGame}/>
 					<input type='button' value='Undo' onClick={this.undo}/><br/><br/>
-					<input type='button' id='showScore' value='Show Score' onClick={this.showScore}/>
 				</div>
 				<div className='message'>{this.state.info}</div>
 				<br/><br/>

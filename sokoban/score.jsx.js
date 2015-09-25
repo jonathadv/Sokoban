@@ -64,9 +64,9 @@ var ScoreBoard = React.createClass({
 							)})
 
 				}</table><br/><br/>
-				
+
   				<input id='inputPlayer' onChange={this.handleOnChange}/>
-  				<button id='inputPlayerButton'onClick={this.handleSubmit}>Add</button>
+  				<button id='inputPlayerButton' onClick={this.handleSubmit}>Add</button>
 
 			</div>
 		)
