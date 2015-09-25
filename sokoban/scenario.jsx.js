@@ -35,7 +35,7 @@ var Scenario = React.createClass({
 
 		this.startListener();
 
-		var currentLevel = 3;
+		var currentLevel = 0;
 
 		var Levels = [
 						[
@@ -101,7 +101,7 @@ var Scenario = React.createClass({
 		return {
 				levelList : Levels,
 				scenario : scenarioLevel,
-				level : currentLevel,
+				level : currentLevel+1,
 				pos_x : x,
 				pos_y : y,
 				moves : 0,
@@ -346,6 +346,10 @@ var Scenario = React.createClass({
 		}.bind(this);
 	},
 
+	stopListener: function(){
+		document.onkeydown = null;
+	},
+
 	showMessage: function(message){
 		this.state.info = message;
 		console.log(message)
@@ -428,7 +432,11 @@ var Scenario = React.createClass({
 
 			if(new_man_piece == this._TREASURE){
 				this.update(new_man_x, new_man_y, this._SAVEMAN)
-				this.update(x, y, this._BLANK)
+				if(current_man_piece == this._SAVEMAN){
+					this.update(x, y, this._GOAL)
+				}else{
+					this.update(x, y, this._BLANK)
+				}
 				this.update(new_obj_x, new_obj_y, this._TREASURE)
 
 			}else{
@@ -528,6 +536,7 @@ var Scenario = React.createClass({
 		var score = document.getElementById('showScore');
 
 		popup.style.display = "none";
+		this.startListener();
 	},
 
 	showScore: function(){
@@ -537,6 +546,7 @@ var Scenario = React.createClass({
 		var score = document.getElementById('showScore');
 
 		popup.style.display =  "block";
+		this.stopListener();
 	},
 
 
