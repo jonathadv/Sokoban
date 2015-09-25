@@ -28,27 +28,46 @@ var Scenario = React.createClass({
 	treasure:  "sokoban/img/treasure.png",
 	blank:  "sokoban/img/blank.png",
 	goal:   "sokoban/img/goal.png",
+	bg: "sokoban/img/bg.png",
 
 
 	getInitialState: function(){
 
 		this.enableScoreInputName();
 
-		var matrix = [
+		var matrix1 = [
 			          [1,1,1,1,1,1,1,1],
 		              [1,8,8,3,0,3,0,1],
 					  [1,8,0,3,0,0,0,1],
 					  [1,0,1,0,0,0,4,1],
 					  [1,1,1,1,1,1,1,1]
 				  ];
-		var x = 3;
-		var y = 6;
-		var win = [[1,1],[1,2],[2,1]];
 
+		var matrix2 = [
+						[7,7,7,1,1,1,7,7,7,7,7],
+						[7,7,1,1,0,1,7,1,1,1,1],
+						[7,1,1,0,0,1,1,1,0,0,1],
+						[1,1,0,3,0,0,0,0,0,0,1],
+						[1,0,0,0,4,3,0,1,0,0,1],
+						[1,1,1,0,3,1,1,1,0,0,1],
+						[7,7,1,0,0,1,8,8,0,0,1],
+						[7,1,1,0,1,1,8,1,0,1,1],
+						[7,1,0,0,0,0,0,0,1,1,7],
+						[7,1,0,0,0,0,0,1,1,7,7],
+						[7,1,1,1,1,1,1,1,7,7,7]
+		    		];
+
+
+		var levelProps = this.scanLevel(matrix1);
+		console.log(levelProps);
+		var x = levelProps.man_x;
+		var y = levelProps.man_y;
+		var win = levelProps.game_win;
+		var level = levelProps.level;
 
 
 		return {
-				scenario : matrix,
+				scenario : level,
 				level : 1,
 				pos_x : x,
 				pos_y : y,
@@ -63,6 +82,38 @@ var Scenario = React.createClass({
 				pushes_hist : []
 
 			 };
+	},
+
+	scanLevel: function(level){
+		var x = 0;
+		var y = 0;
+		var win = [];
+
+		for(var i = 0; i < level.length; i++){
+			for(var j = 0; j < level[0].length; j++){
+				var piece = level[i][j]
+
+				if(piece == this._MAN){
+					x = i;
+					y = j;
+
+				}else if(piece == this._GOAL){
+					win.push([i,j]);
+
+				}
+			}
+		}
+
+		return {
+				level : level,
+				man_x : x,
+			    man_y : y,
+			    game_win : win
+		        }
+	},
+
+	getLevel: function(){
+
 	},
 
 	enableScoreInputName : function(){
@@ -112,6 +163,8 @@ var Scenario = React.createClass({
 			item = this.goal
 		}else if(value == 9){
 			item = this.treasure
+		}else if(value == 7){
+			item = this.bg
 		}
 
 		return <Piece value={item}/>
@@ -151,6 +204,7 @@ var Scenario = React.createClass({
 	},
 
 	hasWon(){
+		console.log('---hasWon ---')
 		var scenario = this.state.scenario;
 		var treasure = this._TREASURE;
 		var win = this.state.win;
