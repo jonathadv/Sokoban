@@ -1,5 +1,6 @@
 var React = require('react');
 var ScoreBoard = require('./score.jsx');
+var ScoreService = require('./score-service');
 
 
 
@@ -31,7 +32,14 @@ var Scenario = React.createClass({
 	bg: "sokoban/img/bg.png",
 
 
+	componentDidMount: function() {
+		ScoreService(1, function(res){
+			console.log(err, res);
+		});
+    },
+
 	getInitialState: function(){
+
 
 		this.startListener();
 

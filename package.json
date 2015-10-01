@@ -12,7 +12,8 @@
   "dependencies": {
     "install": "^0.1.8",
     "npm": "^2.14.3",
-    "react": "^0.13.3"
+    "react": "^0.13.3",
+    "superagent": "~1.4.0"
   },
   "devDependencies": {
     "babel-core": "^5.8.24",
