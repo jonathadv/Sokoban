@@ -21,8 +21,6 @@ var ScoreBoard = React.createClass({
 		}.bind(this));
 
 		this.state.playerList.sort(this.Comparator)
-
-		return this.forceUpdate();
 	},
 
 	getInitialState: function(){
@@ -91,7 +89,7 @@ var ScoreBoard = React.createClass({
 
   				<input id='inputPlayer' onChange={this.handleOnChange}/>
   				<button id='inputPlayerButton' onClick={this.handleSubmit}>Add</button>
-
+				<div id='children'>{this.props.children}</div>
 			</div>
 		)
 	}

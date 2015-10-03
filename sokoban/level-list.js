@@ -1,3 +1,5 @@
+var MatrixUtils = require("./matrix-utils");
+
 module.exports = {
 
 		Levels : [
@@ -55,7 +57,9 @@ module.exports = {
 				],
 
 getLevel : function (number){
-	return this.Levels[number-1];
+
+	var level = MatrixUtils.copyMatrix(this.Levels[number-1]);
+	return level;
 },
 
 size : function(){

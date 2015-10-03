@@ -1,5 +1,6 @@
 var React = require('react');
 var ScoreBoard = require('./score.jsx');
+var PopUp = require('./popup.jsx');
 var Levels = require("./level-list");
 var MatrixUtils = require("./matrix-utils");
 var Logger = require("./log-util");
@@ -42,13 +43,15 @@ var SokobanGame = React.createClass({
 	},
 
 	launchLevel: function(newLevel){
+		Logger.log('--- launchLevel ---')
+
 		var levelProps = this.createLevel(Levels.getLevel(newLevel));
 		var x = levelProps.man_x;
 		var y = levelProps.man_y;
 		var win = levelProps.game_win;
 		var scenarioLevel = levelProps.level;
 
-		//MatrixUtils.printMatrix(scenarioLevel);
+//		MatrixUtils.printMatrix(scenarioLevel);
 
 		return {
 				levelList : Levels,
@@ -64,12 +67,16 @@ var SokobanGame = React.createClass({
 				x_hist : [],
 				y_hist : [],
 				move_hist : [],
-				pushes_hist : []
+				pushes_hist : [],
+
+				popupVisible: 'false'
 
 			 };
 	},
 
 	createLevel: function(level){
+		Logger.log('--- createLevel ---')
+
 		var x = 0;
 		var y = 0;
 		var win = [];
@@ -119,21 +126,19 @@ var SokobanGame = React.createClass({
 
 	previusLevel: function(){
 		Logger.log('--- previusLevel ---')
-		this.hideScore();
 
-		var prev_level = this.state.level -= 1;
+		var prev_level = this.state.level - 1;
 
 		if(prev_level < 1){
 
 			this.showMessage('You are alredy in the first level.');
 
-			return false;
-
 		}else{
 			Logger.log('Backing to level ' + prev_level);
+			return this.setState(this.launchLevel(prev_level));
 		}
 
-		return this.setState(this.launchLevel(prev_level));
+
 	},
 
 
@@ -147,7 +152,7 @@ var SokobanGame = React.createClass({
 
 
 
-	getComponent: function(value){
+	convertComponent: function(value){
 		var item;
 
 		if(value == 0){
@@ -228,8 +233,7 @@ var SokobanGame = React.createClass({
 
 		if(this.state.scenario_history.length >= 1){
 
-			this.setState(this.getLastState())
-			return this.forceUpdate();
+			return this.setState(this.getLastState())
 
 		}else{
 			this.showMessage('No more history');
@@ -284,10 +288,30 @@ var SokobanGame = React.createClass({
 	showMessage: function(message){
 		this.state.info = message;
 		Logger.log(message)
-		return this.forceUpdate();
+	},
+
+	hideScore: function(){
+			Logger.log('--- hideScore ---')
+
+			var popup = document.getElementById('popup');
+
+			popup.style.display = "none";
+
+			this.startListener();
+	},
+
+	showScore: function(){
+			Logger.log('--- showScore ---')
+
+			var popup = document.getElementById('popup');
+
+			popup.style.display =  "block";
+
+			this.stopListener();
 	},
 
 	update: function(new_x, new_y, new_piece){
+		Logger.log('--- update ---')
 		this.state.scenario[new_x][new_y] = new_piece
 
 		if(this.hasWon()){
@@ -460,34 +484,12 @@ var SokobanGame = React.createClass({
 		this.updatePosition(x, y-1);
 	},
 
-	hideScore: function(){
-		Logger.log('--- hideScore ---')
-
-		var popup = document.getElementById('popup');
-		var score = document.getElementById('showScore');
-
-		popup.style.display = "none";
-		this.startListener();
-	},
-
-	showScore: function(){
-		Logger.log('--- showScore ---')
-
-		var popup = document.getElementById('popup');
-		var score = document.getElementById('showScore');
-
-		popup.style.display =  "block";
-		this.stopListener();
-	},
-
-
-
 	render: function(){
-
 		return (
 			<div>
 			<div id='preload1'/>
 			<div id='preload2'/>
+			<div id='preload3'/>
 				<div>
 					<h1 className='title'>Sokoban</h1>
 				</div>
@@ -512,7 +514,7 @@ var SokobanGame = React.createClass({
 										line.map(function(column, j){
 											return (
 												<td key={i + "" + j} className='piece'>
-													{this.getComponent(column)}
+													{this.convertComponent(column)}
 												</td>
 											);
 										}.bind(this))
@@ -526,15 +528,20 @@ var SokobanGame = React.createClass({
 				<br/>
 				<div className='buttons'>
 
-					<input type='button' value='Reset'title='Key: [ R ]' onClick={this.resetTheGame}/>
-					<input type='button' value='Undo' title='Key: [Esc]' onClick={this.undo}/><br/><br/>
-					<input type='button' value='Previus' title='Key: [ B ]' onClick={this.previusLevel}/>
-					<input type='button' value='Next' title='Key: [ N ]' onClick={this.nextLevel}/><br/><br/>
+					<input type='button' value='Reset'className='button' title='Key: [ R ]' onClick={this.resetTheGame}/>
+					<input type='button' value='Undo' className='button' title='Key: [Esc]' onClick={this.undo}/><br/><br/>
+					<input type='button' className='button' value='Previus' title='Key: [ B ]' onClick={this.previusLevel}/>
 
 				</div>
-				<div className='message'>{this.state.info}</div>
-				<br/><br/>
-				<div className='popup' id='popup'><ScoreBoard align='center' level={this.state.level} value={this.state.pushes}/></div>
+
+				<br/><div className='message'>{this.state.info}</div>
+
+
+				<PopUp>
+					<ScoreBoard align='center' level={this.state.level} value={this.state.pushes}>
+						<input type='button' className='button' value='Next Level' title='Key: [ N ]' onClick={this.nextLevel}/>
+					</ScoreBoard>
+				</PopUp>
 				<br/><br/>
 			</div>
 		)
