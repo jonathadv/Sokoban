@@ -541,8 +541,9 @@ var SokobanGame = React.createClass({
 					<ScoreBoard align='center' level={this.state.level} value={this.state.pushes}>
 						<input type='button' className='button' value='Next Level' title='Key: [ N ]' onClick={this.nextLevel}/>
 					</ScoreBoard>
+
 				</PopUp>
-				<br/><br/>
+
 			</div>
 		)
 
