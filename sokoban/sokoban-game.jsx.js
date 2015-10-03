@@ -36,16 +36,24 @@ var SokobanGame = React.createClass({
 		this.startListener();
 
 		var currentLevel = 1;
-		var levelProps = this.createLevel(Levels(currentLevel));
+
+		return this.launchLevel(currentLevel);
+
+	},
+
+	launchLevel: function(newLevel){
+		var levelProps = this.createLevel(Levels.getLevel(newLevel));
 		var x = levelProps.man_x;
 		var y = levelProps.man_y;
 		var win = levelProps.game_win;
 		var scenarioLevel = levelProps.level;
 
+		//MatrixUtils.printMatrix(scenarioLevel);
+
 		return {
 				levelList : Levels,
 				scenario : scenarioLevel,
-				level : currentLevel,
+				level : newLevel,
 				pos_x : x,
 				pos_y : y,
 				moves : 0,
@@ -92,44 +100,40 @@ var SokobanGame = React.createClass({
 	nextLevel: function(){
 		Logger.log('--- nextLevel ---')
 		this.hideScore();
+
 		var next_level = this.state.level += 1;
-		if(next_level >= this.state.levelList.length){
+
+		if(next_level > Levels.size()){
 
 			this.showMessage('No more levels.');
 
 			return false;
+
+		}else{
+			Logger.log('Next Level available is ' + next_level);
 		}
 
-		var currentLevel = this.state.levelList[next_level]
-		var levelProps = this.createLevel(currentLevel);
-		var x = levelProps.man_x;
-		var y = levelProps.man_y;
-		var win = levelProps.game_win;
-		var scenarioLevel = levelProps.level;
+		return this.setState(this.launchLevel(next_level));
 
+	},
 
-		this.setState(function(){
+	previusLevel: function(){
+		Logger.log('--- previusLevel ---')
+		this.hideScore();
 
-			return {
-					levelList : this.state.levelList,
-					scenario : scenarioLevel,
-					level : next_level,
-					pos_x : x,
-					pos_y : y,
-					moves : 0,
-					pushes: 0,
-					win : win,
+		var prev_level = this.state.level -= 1;
 
-					scenario_history : [],
-					x_hist : [],
-					y_hist : [],
-					move_hist : [],
-					pushes_hist : []
+		if(prev_level < 1){
 
-				};
-			});
+			this.showMessage('You are alredy in the first level.');
 
-			return this.forceUpdate();
+			return false;
+
+		}else{
+			Logger.log('Backing to level ' + prev_level);
+		}
+
+		return this.setState(this.launchLevel(prev_level));
 	},
 
 
@@ -234,7 +238,10 @@ var SokobanGame = React.createClass({
 
 	resetTheGame: function(message){
 		Logger.log('--- Reset ---')
-		this.setState(this.getInitialState());
+
+		var currentLevel = this.state.level
+
+		this.setState(this.launchLevel(currentLevel));
 		this.state.info = '';
 		this.hideScore();
 	},
@@ -496,7 +503,9 @@ var SokobanGame = React.createClass({
 				</div>
 				<br/>
 				<div className='scenario'>
-					<table className='canvas'>{
+					<table className='canvas'>
+					<tbody>{
+
 							this.state.scenario.map(function(line, i){
 								return (
 									<tr key={i} className='piece'>{
@@ -510,14 +519,16 @@ var SokobanGame = React.createClass({
 									}</tr>
 								);
 							}.bind(this))
-					}</table>
+
+					}</tbody>
+					</table>
 				</div>
 				<br/>
 				<div className='buttons'>
 
 					<input type='button' value='Reset'title='Key: [ R ]' onClick={this.resetTheGame}/>
 					<input type='button' value='Undo' title='Key: [Esc]' onClick={this.undo}/><br/><br/>
-					<input type='button' value='Previus' title='Key: [ B ]' onClick={this.nextLevel}/>
+					<input type='button' value='Previus' title='Key: [ B ]' onClick={this.previusLevel}/>
 					<input type='button' value='Next' title='Key: [ N ]' onClick={this.nextLevel}/><br/><br/>
 
 				</div>
