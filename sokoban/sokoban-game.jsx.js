@@ -1,10 +1,10 @@
 var React = require('react');
 var ScoreBoard = require('./score.jsx');
-var ScoreService = require('./score-service');
+var Levels = require("./level-list");
+var MatrixUtils = require("./matrix-utils");
+var Logger = require("./log-util");
 
-
-
-var Piece = React.createClass({
+var BoardPiece = React.createClass({
 	render: function(){
 		return (
 				<img src={this.props.value}/>
@@ -13,7 +13,7 @@ var Piece = React.createClass({
 });
 
 
-var Scenario = React.createClass({
+var SokobanGame = React.createClass({
 	_MAN: 4,
 	_SAVEMAN: 5,
 	_STONE: 1,
@@ -32,75 +32,11 @@ var Scenario = React.createClass({
 	bg: "sokoban/img/bg.png",
 
 
-	componentDidMount: function() {
-		ScoreService(1, function(res){
-			console.log(err, res);
-		});
-    },
-
 	getInitialState: function(){
-
-
 		this.startListener();
 
-		var currentLevel = 0;
-
-		var Levels = [
-						[
-				    		[1,1,1,1,1,1,1,1],
-				    		[1,8,8,3,0,3,0,1],
-				    		[1,8,0,3,0,0,0,1],
-				    		[1,0,1,0,0,0,4,1],
-				    		[1,1,1,1,1,1,1,1]
-				    	],
-
-						[
-							[7,7,7,1,1,1,7,7,7,7,7],
-							[7,7,1,1,0,1,7,1,1,1,1],
-							[7,1,1,0,0,1,1,1,0,0,1],
-							[1,1,0,3,0,0,0,0,0,0,1],
-							[1,0,0,0,4,3,0,1,0,0,1],
-							[1,1,1,0,3,1,1,1,0,0,1],
-							[7,7,1,0,0,1,8,8,0,0,1],
-							[7,1,1,0,1,1,8,1,0,1,1],
-							[7,1,0,0,0,0,0,0,1,1,7],
-							[7,1,0,0,0,0,0,1,1,7,7],
-							[7,1,1,1,1,1,1,1,7,7,7]
-		    			],
-
-						[
-							[7,1,1,7,1,1,1,1,1],
-							[1,1,7,1,1,0,8,0,1],
-							[1,7,1,1,0,3,8,0,1],
-							[7,1,1,0,3,0,0,0,1],
-							[1,1,0,3,4,0,1,1,1],
-							[1,0,3,0,0,1,1,7,7],
-							[1,8,8,0,1,1,7,1,1],
-							[1,0,0,0,1,7,1,1,7],
-							[1,1,1,1,1,7,1,7,7]
-						],
-
-						[
-							[7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1],
-							[7,7,7,7,7,7,7,7,7,7,1,1,0,0,0,1],
-							[7,7,7,7,7,7,7,7,7,7,1,0,0,0,0,1],
-							[7,7,7,7,1,1,1,1,7,7,1,0,3,0,1,1],
-							[7,7,7,7,1,0,0,1,1,1,1,3,0,3,1,7],
-							[7,7,7,7,1,0,0,0,0,0,3,0,3,0,1,7],
-							[7,7,7,1,1,0,1,1,0,3,0,3,0,3,1,7],
-							[7,7,7,1,0,0,8,1,0,0,3,0,3,0,1,7],
-							[7,7,7,1,0,0,8,1,0,0,0,0,0,0,1,7],
-							[1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,7],
-							[1,8,8,8,8,0,4,0,0,1,7,7,7,7,7,7],
-							[1,8,8,8,8,0,0,0,0,1,7,7,7,7,7,7],
-							[1,1,0,0,1,1,1,1,1,1,7,7,7,7,7,7],
-							[7,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7],
-						]
-
-					];
-
-
-		var levelProps = this.scanLevel(Levels[currentLevel]);
+		var currentLevel = 1;
+		var levelProps = this.createLevel(Levels(currentLevel));
 		var x = levelProps.man_x;
 		var y = levelProps.man_y;
 		var win = levelProps.game_win;
@@ -109,7 +45,7 @@ var Scenario = React.createClass({
 		return {
 				levelList : Levels,
 				scenario : scenarioLevel,
-				level : currentLevel+1,
+				level : currentLevel,
 				pos_x : x,
 				pos_y : y,
 				moves : 0,
@@ -125,7 +61,7 @@ var Scenario = React.createClass({
 			 };
 	},
 
-	scanLevel: function(level){
+	createLevel: function(level){
 		var x = 0;
 		var y = 0;
 		var win = [];
@@ -154,7 +90,7 @@ var Scenario = React.createClass({
 	},
 
 	nextLevel: function(){
-		console.log('--- nextLevel ---')
+		Logger.log('--- nextLevel ---')
 		this.hideScore();
 		var next_level = this.state.level += 1;
 		if(next_level >= this.state.levelList.length){
@@ -165,7 +101,7 @@ var Scenario = React.createClass({
 		}
 
 		var currentLevel = this.state.levelList[next_level]
-		var levelProps = this.scanLevel(currentLevel);
+		var levelProps = this.createLevel(currentLevel);
 		var x = levelProps.man_x;
 		var y = levelProps.man_y;
 		var win = levelProps.game_win;
@@ -205,27 +141,7 @@ var Scenario = React.createClass({
 		}
 	},
 
-	copyArray: function(array){
 
-
-		var new_array = array.slice()
-		var count = 0
-
-		array.map(function(i){
-			new_array[count] = i.slice()
-			count++
-		})
-
-		return new_array;
-
-	},
-
-
-	printArray: function(array){
-		array.map(function(i){
-			console.log(i)
-		})
-	},
 
 	getComponent: function(value){
 		var item;
@@ -248,12 +164,12 @@ var Scenario = React.createClass({
 			item = this.bg
 		}
 
-		return <Piece value={item}/>
+		return <BoardPiece value={item}/>
 	},
 
 	updateHistory: function(){
-		console.log('--- Update History ---')
-		var old_hist = this.copyArray(this.state.scenario)
+		Logger.log('--- Update History ---')
+		var old_hist = MatrixUtils.copyMatrix(this.state.scenario)
 		var old_x = this.state.pos_x
 		var old_y = this.state.pos_y
 		var old_move = this.state.moves
@@ -285,7 +201,7 @@ var Scenario = React.createClass({
 	},
 
 	hasWon(){
-		console.log('---hasWon ---')
+		Logger.log('---hasWon ---')
 		var scenario = this.state.scenario;
 		var treasure = this._TREASURE;
 		var win = this.state.win;
@@ -304,7 +220,7 @@ var Scenario = React.createClass({
 	},
 
 	undo: function(){
-		console.log('--- Undo ---')
+		Logger.log('--- Undo ---')
 
 		if(this.state.scenario_history.length >= 1){
 
@@ -317,7 +233,7 @@ var Scenario = React.createClass({
 	},
 
 	resetTheGame: function(message){
-		console.log('--- Reset ---')
+		Logger.log('--- Reset ---')
 		this.setState(this.getInitialState());
 		this.state.info = '';
 		this.hideScore();
@@ -360,7 +276,7 @@ var Scenario = React.createClass({
 
 	showMessage: function(message){
 		this.state.info = message;
-		console.log(message)
+		Logger.log(message)
 		return this.forceUpdate();
 	},
 
@@ -461,7 +377,7 @@ var Scenario = React.createClass({
 
 	updatePosition: function(new_x, new_y){
 		this.updateHistory()
-		console.log('--- Update ---')
+		Logger.log('--- Update ---')
 		var x = this.state.pos_x;
 		var y = this.state.pos_y;
 
@@ -503,7 +419,7 @@ var Scenario = React.createClass({
 
 	moveUP: function(){
 		this.state.info = ''
-		console.log('--- moveUP ---')
+		Logger.log('--- moveUP ---')
 		var x = this.state.pos_x;
 		var y = this.state.pos_y;
 
@@ -512,7 +428,7 @@ var Scenario = React.createClass({
 
 	moveDown: function(){
 		this.state.info = ''
-		console.log('--- moveDown ---')
+		Logger.log('--- moveDown ---')
 		var x = this.state.pos_x;
 		var y = this.state.pos_y;
 
@@ -521,7 +437,7 @@ var Scenario = React.createClass({
 
 	moveRight: function(){
 		this.state.info = ''
-		console.log('--- moveRight ---')
+		Logger.log('--- moveRight ---')
 		var x = this.state.pos_x;
 		var y = this.state.pos_y;
 
@@ -529,7 +445,7 @@ var Scenario = React.createClass({
 	},
 
 	moveLeft: function(){
-		console.log('--- moveLeft ---')
+		Logger.log('--- moveLeft ---')
 		this.state.info = ''
 		var x = this.state.pos_x;
 		var y = this.state.pos_y;
@@ -538,7 +454,7 @@ var Scenario = React.createClass({
 	},
 
 	hideScore: function(){
-		console.log('--- hideScore ---')
+		Logger.log('--- hideScore ---')
 
 		var popup = document.getElementById('popup');
 		var score = document.getElementById('showScore');
@@ -548,7 +464,7 @@ var Scenario = React.createClass({
 	},
 
 	showScore: function(){
-		console.log('--- showScore ---')
+		Logger.log('--- showScore ---')
 
 		var popup = document.getElementById('popup');
 		var score = document.getElementById('showScore');
@@ -607,7 +523,7 @@ var Scenario = React.createClass({
 				</div>
 				<div className='message'>{this.state.info}</div>
 				<br/><br/>
-				<div className='popup' id='popup'><ScoreBoard align='center' value={this.state.pushes}/></div>
+				<div className='popup' id='popup'><ScoreBoard align='center' level={this.state.level} value={this.state.pushes}/></div>
 				<br/><br/>
 			</div>
 		)
@@ -616,4 +532,4 @@ var Scenario = React.createClass({
 });
 
 //export default
-export default Scenario;
+export default SokobanGame;

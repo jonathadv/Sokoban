@@ -1,5 +1,5 @@
 var React = require('react');
-var Scenario = require('./scenario.jsx.js');
+var SokobanGame = require('./sokoban-game.jsx.js');
 
 
-React.render(<Scenario/>, document.getElementById('main'));
+React.render(<SokobanGame/>, document.getElementById('main'));

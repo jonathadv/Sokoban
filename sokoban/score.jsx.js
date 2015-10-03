@@ -1,9 +1,32 @@
 var React = require('react');
+var ScoreService = require('./score-service');
 
 var ScoreBoard = React.createClass({
 
+	componentDidMount: function (){
+		this.getScoreFromService()
+	},
+
+	getScoreFromService: function() {
+		ScoreService(this.props.level, function(res){
+			var listScore = res.scoreItem
+			var score = [];
+
+			listScore.map(function(item){
+				score.push([item.name, item.moves])
+			}.bind(this));
+
+			this.state.playerList = score;
+
+		}.bind(this));
+
+		this.state.playerList.sort(this.Comparator)
+
+		return this.forceUpdate();
+	},
+
 	getInitialState: function(){
-		var inicialScore = [['Seu Brarriga', 10], ['Seu Madruga',5], ['Kiko',256]];
+		var inicialScore = [];
 
 		inicialScore.sort(this.Comparator)
 
@@ -36,6 +59,7 @@ var ScoreBoard = React.createClass({
 	},
 
 	Comparator: function(a, b){
+
 		if (a[1] < b[1]) return -1;
 		if (a[1] > b[1]) return 1;
 
