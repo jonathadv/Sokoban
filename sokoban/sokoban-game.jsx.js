@@ -444,7 +444,15 @@ var SokobanGame = React.createClass({
 			this.updateManXY(new_x, new_y)
 		}
 
-		return this.forceUpdate();
+		var newScenario = this.state.scenario
+
+		return this.setState(
+			function(){
+				return {
+					scenario : newScenario
+				}
+			}
+		);
 
 	},
 
