@@ -23,14 +23,14 @@ var SokobanGame = React.createClass({
 	_OBJECT: 3,
 	_TREASURE: 9,
 
-	stone: "sokoban/assets/img/halfstone.png",
-	man: "sokoban/assets/img/man.png",
-	saveman: "sokoban/assets/img/saveman.png",
-	object: "sokoban/assets/img/object.png",
-	treasure:  "sokoban/assets/img/treasure.png",
-	blank:  "sokoban/assets/img/blank.png",
-	goal:   "sokoban/assets/img/goal.png",
-	bg: "sokoban/assets/img/bg.png",
+	stone: "./assets/img/halfstone.png",
+	man: "./assets/img/man.png",
+	saveman: "./assets/img/saveman.png",
+	object: "./assets/img/object.png",
+	treasure:  "./assets/img/treasure.png",
+	blank:  "./assets/img/blank.png",
+	goal:   "./assets/img/goal.png",
+	bg: "./assets/img/bg.png",
 
 
 	getInitialState: function(){

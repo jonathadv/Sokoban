@@ -1,5 +1,7 @@
 module.exports = {
+    
   context: __dirname + "/sokoban",
+  
   entry: {
     javascript: "./app.jsx.js",
     html: "./index.html"
@@ -7,10 +9,9 @@ module.exports = {
 
   output: {
     filename: "app.jsx.js",
-    path: __dirname + "/dist",
+    path: __dirname + "/dist/sokoban",
     
   },
-
 
   module: {
     loaders: [

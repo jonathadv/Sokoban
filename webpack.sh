@@ -1,4 +1,4 @@
 #!/bin/bash
 
 
-webpack-dev-server --hot --inline
+webpack-dev-server --hot --inline --content-base ./sokoban

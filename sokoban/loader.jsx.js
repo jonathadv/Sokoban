@@ -4,7 +4,7 @@ var Loader = React.createClass({
 
 
 	render: function(){
-		return <div id='loader'><img src='sokoban/assets/img/loader.gif'/></div>
+		return <div id='loader'><img src='./assets/img/loader.gif'/></div>
 	}
 
 
