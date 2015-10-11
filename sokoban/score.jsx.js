@@ -1,5 +1,6 @@
 var React = require('react');
 var ScoreService = require('./score-service');
+var Loader = require('./loader.jsx')
 
 var ScoreBoard = React.createClass({
 
@@ -8,19 +9,18 @@ var ScoreBoard = React.createClass({
 	},
 
 	getScoreFromService: function() {
-		ScoreService(this.props.level, function(res){
+		ScoreService.getScoreByLevel(this.props.level, function(res){
 			var listScore = res.scoreItem
 			var score = [];
 
 			listScore.map(function(item){
-				score.push([item.name, item.moves])
+				score.push([item.name, parseInt(item.moves)])
 			}.bind(this));
 
-			this.state.playerList = score;
+			return this.setPlayerList(score)
 
 		}.bind(this));
 
-		this.state.playerList.sort(this.Comparator)
 	},
 
 	getInitialState: function(){
@@ -40,19 +40,34 @@ var ScoreBoard = React.createClass({
 
 	},
 
+
+	setPlayerList: function(list){
+		list.sort(this.Comparator)
+
+		this.setState(function(){
+			return{
+				playerList: list,
+				newPlayer: ''
+			}
+		})
+	},
+
 	handleSubmit: function(){
 		if(this.state.newPlayer.length > 0){
-			var nextItems = this.state.playerList.concat([[this.state.newPlayer, this.props.value]]);
+			var newPlayerList = this.state.playerList
+			var newPlayer = [this.state.newPlayer, this.props.value]
 
-			this.state.playerList = nextItems;
-			this.state.newPlayer = '';
-
-			this.state.playerList.sort(this.Comparator)
+			newPlayerList.push(newPlayer)
 
 			document.getElementById('inputPlayer').value=''
 			document.getElementById('inputPlayer').style="display:none;"
 			document.getElementById('inputPlayerButton').style="display:none;"
-			this.forceUpdate()
+
+
+			var playerList = this.state.playerList
+
+			return this.setPlayerList(playerList);
+
 		}
 	},
 
@@ -64,32 +79,52 @@ var ScoreBoard = React.createClass({
 		return 0;
 	},
 
+	getTableContent: function(){
+		return this.state.playerList.map(
+			function(item, i){
+				return(
+					<tr key={'tr'+i}>
+						<td key={'a'+ i}>{i+1}</td>
+						<td key={'b'+ i}>{item[0]}</td>
+						<td key={'c'+ i}>{item[1]}</td>
+					</tr>
+				)})
+	},
+
+	showLoading:  function(){
+		return (
+		<tr key='tr1'>
+			<td key='a1'><Loader/></td>
+			<td key='a2'><Loader/></td>
+			<td key='a3'><Loader/></td>
+		</tr>)
+
+	},
+
 	render: function(){
 		return(
 			<div className='scoreBoard'>
-				<h1>Score</h1>
-				<table>
+				<h1><b>Score</b></h1>
+				<table className="table">
+					<tbody>
 					<tr>
-						<td className='scoreTitle2'>Position</td>
-						<td className='scoreTitle1'>Name</td>
-						<td className='scoreTitle2'># of Pushes</td>
+						<td className="active"><b>Position</b></td>
+						<td className="active"><b>Name</b></td>
+						<td className="active"><b># of Pushes</b></td>
 					</tr>
-				{
-					this.state.playerList.map(
-						function(item, i){
-							return(
-								<tr key={'tr'+i}>
-									<td className='scoreNumber' key={'a'+ i}>{i+1}</td>
-									<td className='scoreItem' key={'b'+ i}>{item[0]}</td>
-									<td className='scoreNumber' key={'c'+ i}>{item[1]}</td>
-								</tr>
-							)})
+					{
 
-				}</table><br/><br/>
 
-  				<input id='inputPlayer' onChange={this.handleOnChange}/>
-  				<button id='inputPlayerButton' onClick={this.handleSubmit}>Add</button>
+					(this.state.playerList.length > 0 && this.getTableContent()) || this.showLoading()
+
+					}
+					</tbody></table><br/><br/>
+				<div className="form-inline">
+  					<input id='inputPlayer' type="text" className="form-control" placeholder="Your Name" onChange={this.handleOnChange}/>
+  					<button id='inputPlayerButton' type="button" className="btn btn-default" onClick={this.handleSubmit}>Add</button>
+				</div>
 				<div id='children'>{this.props.children}</div>
+
 			</div>
 		)
 	}

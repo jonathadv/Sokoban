@@ -1,12 +1,12 @@
 module.exports = {
   context: __dirname + "/sokoban",
   entry: {
-    javascript: "./sokoban.jsx.js",
+    javascript: "./app.jsx.js",
     html: "./index.html"
   },
 
   output: {
-    filename: "sokoban.jsx.js",
+    filename: "app.jsx.js",
     path: __dirname + "/dist",
     
   },

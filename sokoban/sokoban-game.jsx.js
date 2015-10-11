@@ -23,14 +23,14 @@ var SokobanGame = React.createClass({
 	_OBJECT: 3,
 	_TREASURE: 9,
 
-	stone: "sokoban/img/halfstone.png",
-	man: "sokoban/img/man.png",
-	saveman: "sokoban/img/saveman.png",
-	object: "sokoban/img/object.png",
-	treasure:  "sokoban/img/treasure.png",
-	blank:  "sokoban/img/blank.png",
-	goal:   "sokoban/img/goal.png",
-	bg: "sokoban/img/bg.png",
+	stone: "sokoban/assets/img/halfstone.png",
+	man: "sokoban/assets/img/man.png",
+	saveman: "sokoban/assets/img/saveman.png",
+	object: "sokoban/assets/img/object.png",
+	treasure:  "sokoban/assets/img/treasure.png",
+	blank:  "sokoban/assets/img/blank.png",
+	goal:   "sokoban/assets/img/goal.png",
+	bg: "sokoban/assets/img/bg.png",
 
 
 	getInitialState: function(){
@@ -494,7 +494,7 @@ var SokobanGame = React.createClass({
 
 	render: function(){
 		return (
-			<div>
+			<div className="container-fluid">
 			<div id='preload1'/>
 			<div id='preload2'/>
 			<div id='preload3'/>
@@ -536,9 +536,9 @@ var SokobanGame = React.createClass({
 				<br/>
 				<div className='buttons'>
 
-					<input type='button' value='Reset'className='button' title='Key: [ R ]' onClick={this.resetTheGame}/>
-					<input type='button' value='Undo' className='button' title='Key: [Esc]' onClick={this.undo}/><br/><br/>
-					<input type='button' className='button' value='Previus' title='Key: [ B ]' onClick={this.previusLevel}/>
+					<input type='button' value='Reset'className='btn btn-danger' title='Key: [ R ]' onClick={this.resetTheGame}/>
+					<input type='button' value='Undo' className='btn btn-danger' title='Key: [Esc]' onClick={this.undo}/><br/><br/>
+					<input type='button' className='btn btn-danger' value='Previus' title='Key: [ B ]' onClick={this.previusLevel}/>
 
 				</div>
 
