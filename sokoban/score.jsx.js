@@ -5,11 +5,14 @@ var Loader = require('./loader.jsx')
 var ScoreBoard = React.createClass({
 
 	componentDidMount: function (){
-		this.getScoreFromService()
+		var level = (this.props.level == undefined) ? 1 : this.props.level
+
+		this.getScoreFromService(level)
+
 	},
 
-	getScoreFromService: function() {
-		ScoreService.getScoreByLevel(this.props.level, function(res){
+	getScoreFromService: function(level) {
+		ScoreService.getScoreByLevel(level, function(res){
 			var listScore = res.scoreItem
 			var score = [];
 
@@ -112,6 +115,16 @@ var ScoreBoard = React.createClass({
 
 	},
 
+	showNameField: function(){
+		return (
+
+		<div className="form-inline">
+			<input id='inputPlayer' type="text" className="form-control" placeholder="Your Name" onChange={this.handleOnChange}/>
+			<button id='inputPlayerButton' type="button" className="btn btn-default" onClick={this.handleSubmit}>Add</button>
+		</div>
+		)
+	},
+
 	render: function(){
 		return(
 			<div className='scoreBoard'>
@@ -125,15 +138,15 @@ var ScoreBoard = React.createClass({
 					</tr>
 					{
 
-
 					(this.state.playerList.length > 0 && this.getTableContent()) || this.showLoading()
 
 					}
 					</tbody></table><br/><br/>
-				<div className="form-inline">
-  					<input id='inputPlayer' type="text" className="form-control" placeholder="Your Name" onChange={this.handleOnChange}/>
-  					<button id='inputPlayerButton' type="button" className="btn btn-default" onClick={this.handleSubmit}>Add</button>
-				</div>
+
+					{
+						this.props.nameField && this.showNameField()
+					}
+
 				<div id='children'>{this.props.children}</div>
 
 			</div>

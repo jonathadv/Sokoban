@@ -1,5 +1,15 @@
-var React = require('react');
-var SokobanGame = require('./sokoban-game.jsx.js');
+var React = require('react'),
+	Router = require('react-router'),
+    routes = require('./routes.jsx');
 
 
-React.render(<SokobanGame/>, document.getElementById('main'));
+
+
+//React.render(<SokobanGame/>, document.getElementById('main'));
+
+Router.run(routes, function(Handler) {
+    React.render(
+        <Handler {...this.props} />,
+		document.getElementById('main')
+    );
+});

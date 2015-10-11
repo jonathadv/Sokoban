@@ -112,7 +112,7 @@ var SokobanGame = React.createClass({
 
 		if(next_level > Levels.size()){
 
-			this.showMessage('No more levels.');
+			this.showMessage('No more levels.', 'warn');
 
 			return false;
 
@@ -285,8 +285,46 @@ var SokobanGame = React.createClass({
 		document.onkeydown = null;
 	},
 
-	showMessage: function(message){
-		this.state.info = message;
+	showMessage: function(message, type){
+		var alertSucc = 'alert alert-success'
+		var alertInfo = 'alert alert-info'
+		var alertWarn = 'alert alert-warning'
+		var alertDang = 'alert alert-danger'
+
+		if(! type){
+			type = alertInfo
+
+		}else{
+			switch (type) {
+		        case 'succ':
+		            type = alertSucc
+		            break;
+		        case 'info':
+		            type = alertInfo
+		            break;
+		        case 'warn':
+		            type = alertWarn
+		            break;
+				case 'dang':
+			        type = alertDang
+			        break;
+			}
+		}
+
+
+
+		document.getElementById('message').className=type
+		document.getElementById('message').style='display:block'
+		setTimeout(function(){
+					document.getElementById('message').style='display:none'}
+					, 3000);
+
+		this.setState(function(){
+			return {
+				info: message
+			}
+		})
+
 		Logger.log(message)
 	},
 
@@ -433,7 +471,7 @@ var SokobanGame = React.createClass({
 
 		}else if(piece ==  this._STONE){
 			var message = 'You can not go through the stone.';
-			this.showMessage(message)
+			this.showMessage(message, 'warn')
 
 		}else if(piece ==  this._OBJECT || piece == this._TREASURE){
 			this.pushObject(new_x, new_y)
@@ -498,9 +536,6 @@ var SokobanGame = React.createClass({
 			<div id='preload1'/>
 			<div id='preload2'/>
 			<div id='preload3'/>
-				<div>
-					<h1 className='title'>Sokoban</h1>
-				</div>
 				<div className='info'>
 					<span className='info_title'>Level: </span>
 					<span className='info_value'>{this.state.level}</span>
@@ -542,11 +577,14 @@ var SokobanGame = React.createClass({
 
 				</div>
 
-				<br/><div className='message'>{this.state.info}</div>
+				<br/>
+				<div id='message' className="alert alert-success" style={{'display':'none'}}>
+					<div className='text-center'>{this.state.info}</div>
+				</div>
 
 
 				<PopUp>
-					<ScoreBoard align='center' level={this.state.level} value={this.state.pushes}>
+					<ScoreBoard align='center' level={this.state.level} value={this.state.pushes} nameField='true'>
 						<input type='button' className='button' value='Next Level' title='Key: [ N ]' onClick={this.nextLevel}/>
 					</ScoreBoard>
 
