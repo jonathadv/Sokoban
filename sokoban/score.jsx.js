@@ -23,6 +23,10 @@ var ScoreBoard = React.createClass({
 
 	},
 
+	addScoreService: function(level, name, moves) {
+		ScoreService.addScoreByLevel(level, name, moves);
+	},
+
 	getInitialState: function(){
 		var inicialScore = [];
 
@@ -59,10 +63,17 @@ var ScoreBoard = React.createClass({
 
 			newPlayerList.push(newPlayer)
 
+
+			var name = newPlayer[0]
+			var moves = newPlayer[1]
+			var level = this.props.level
+
+			this.addScoreService(level, name, moves);
+
+
 			document.getElementById('inputPlayer').value=''
 			document.getElementById('inputPlayer').style="display:none;"
 			document.getElementById('inputPlayerButton').style="display:none;"
-
 
 			var playerList = this.state.playerList
 

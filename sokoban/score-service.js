@@ -13,6 +13,17 @@ module.exports = {
                     fn(res);
                 })
             );
-    }
+    },
+
+
+    addScoreByLevel: function(level, name, moves){
+        return(
+            superagent.post(URL + '/' + level + '/' + name + '/' + moves).
+            end(function(err, res){
+                console.log('Created')
+            })
+        );
+}
+
 
 }
