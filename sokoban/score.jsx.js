@@ -3,8 +3,10 @@ var ScoreService = require('./score-service');
 var Loader = require('./loader.jsx')
 
 var ScoreBoard = React.createClass({
+	currentLevel : 0,
 
 	componentDidMount: function (){
+		
 		var level = (this.props.level == undefined) ? 1 : this.props.level
 
 		this.getScoreFromService(level)
@@ -12,6 +14,7 @@ var ScoreBoard = React.createClass({
 	},
 
 	getScoreFromService: function(level) {
+
 		ScoreService.getScoreByLevel(level, function(res){
 			var listScore = res.scoreItem
 			var score = [];
@@ -126,6 +129,14 @@ var ScoreBoard = React.createClass({
 	},
 
 	render: function(){
+
+		if(this.props.level != undefined &
+			this.props.level != this.currentLevel){
+
+			this.currentLevel = this.props.level
+			this.getScoreFromService(this.currentLevel)
+		}
+
 		return(
 			<div className='scoreBoard'>
 				<h1><b>Score</b></h1>

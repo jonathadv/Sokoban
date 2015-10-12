@@ -495,7 +495,7 @@ var SokobanGame = React.createClass({
 	},
 
 	moveUP: function(){
-		this.state.info = ''
+
 		Logger.log('--- moveUP ---')
 		var x = this.state.pos_x;
 		var y = this.state.pos_y;
@@ -504,7 +504,7 @@ var SokobanGame = React.createClass({
 	},
 
 	moveDown: function(){
-		this.state.info = ''
+
 		Logger.log('--- moveDown ---')
 		var x = this.state.pos_x;
 		var y = this.state.pos_y;
@@ -513,7 +513,7 @@ var SokobanGame = React.createClass({
 	},
 
 	moveRight: function(){
-		this.state.info = ''
+
 		Logger.log('--- moveRight ---')
 		var x = this.state.pos_x;
 		var y = this.state.pos_y;
@@ -523,7 +523,7 @@ var SokobanGame = React.createClass({
 
 	moveLeft: function(){
 		Logger.log('--- moveLeft ---')
-		this.state.info = ''
+
 		var x = this.state.pos_x;
 		var y = this.state.pos_y;
 
@@ -531,6 +531,7 @@ var SokobanGame = React.createClass({
 	},
 
 	render: function(){
+
 		return (
 			<div className="container-fluid">
 			<div id='preload1'/>
