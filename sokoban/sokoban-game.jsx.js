@@ -4,6 +4,7 @@ var PopUp = require('./popup.jsx');
 var Levels = require("./level-list");
 var MatrixUtils = require("./matrix-utils");
 var Logger = require("./log-util");
+var Keyboard = require("./keyboard-util");
 
 var BoardPiece = React.createClass({
 	render: function(){
@@ -22,6 +23,7 @@ var SokobanGame = React.createClass({
 	_GOAL: 8,
 	_OBJECT: 3,
 	_TREASURE: 9,
+	_BACKGROUND: 7,
 
 	stone: "./assets/img/halfstone.png",
 	man: "./assets/img/man.png",
@@ -34,7 +36,7 @@ var SokobanGame = React.createClass({
 
 
 	getInitialState: function(){
-		this.startListener();
+		Keyboard.startKeyListener(this);
 
 		var currentLevel = 1;
 
@@ -155,21 +157,21 @@ var SokobanGame = React.createClass({
 	convertComponent: function(value){
 		var item;
 
-		if(value == 0){
+		if(value == this._BLANK){
 			item = this.blank
-		}else if(value == 1){
+		}else if(value == this._STONE){
 			item = this.stone
-		}else if(value == 3){
+		}else if(value == this._OBJECT){
 			item = this.object
-		}else if(value == 4){
+		}else if(value == this._MAN){
 			item = this.man
-		}else if(value == 5){
+		}else if(value == this._SAVEMAN){
 			item = this.saveman
-		}else if(value == 8){
+		}else if(value == this._GOAL){
 			item = this.goal
-		}else if(value == 9){
+		}else if(value == this._TREASURE){
 			item = this.treasure
-		}else if(value == 7){
+		}else if(value == this._BACKGROUND){
 			item = this.bg
 		}
 
@@ -250,40 +252,6 @@ var SokobanGame = React.createClass({
 		this.hideScore();
 	},
 
-	startListener: function(){
-		document.onkeydown = function(e) {
-			switch (e.keyCode) {
-		        case 37:
-		            this.moveLeft();
-		            break;
-		        case 38:
-		            this.moveUP();
-		            break;
-		        case 39:
-		            this.moveRight();
-		            break;
-		        case 40:
-		            this.moveDown();
-		            break;
-				case 27:
-					this.undo();
-					break;
-				case 82:
-					this.resetTheGame();
-					break;
-				case 78:
-					this.nextLevel();
-					break;
-				case 66:
-					this.showMessage('Not implemented. :)');
-					break;
-		    }
-		}.bind(this);
-	},
-
-	stopListener: function(){
-		document.onkeydown = null;
-	},
 
 	showMessage: function(message, type){
 		var alertSucc = 'alert alert-success'
@@ -335,7 +303,7 @@ var SokobanGame = React.createClass({
 
 			popup.style.display = "none";
 
-			this.startListener();
+			Keyboard.startKeyListener(this);
 	},
 
 	showScore: function(){
@@ -345,7 +313,7 @@ var SokobanGame = React.createClass({
 
 			popup.style.display =  "block";
 
-			this.stopListener();
+			Keyboard.stopKeyListener();
 	},
 
 	update: function(new_x, new_y, new_piece){
