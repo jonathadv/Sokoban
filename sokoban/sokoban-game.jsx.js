@@ -23,6 +23,7 @@ var SokobanGame = React.createClass({
 	_GOAL: 8,
 	_OBJECT: 3,
 	_TREASURE: 9,
+	_TREASURE_GIF: 90,
 	_BACKGROUND: 7,
 
 	stone: "./assets/img/halfstone.png",
@@ -30,6 +31,7 @@ var SokobanGame = React.createClass({
 	saveman: "./assets/img/saveman.png",
 	object: "./assets/img/object.png",
 	treasure:  "./assets/img/treasure.png",
+	treasure_gif:  "./assets/img/treasure.gif",
 	blank:  "./assets/img/blank.png",
 	goal:   "./assets/img/goal.png",
 	bg: "./assets/img/bg.png",
@@ -171,6 +173,8 @@ var SokobanGame = React.createClass({
 			item = this.goal
 		}else if(value == this._TREASURE){
 			item = this.treasure
+		}else if(value == this._TREASURE_GIF){
+			item = this.treasure_gif
 		}else if(value == this._BACKGROUND){
 			item = this.bg
 		}
@@ -225,6 +229,15 @@ var SokobanGame = React.createClass({
 			if(scenario[x][y] != treasure){
 				return false;
 			}
+		}
+
+		for(var i = 0; i < win.length; i++){
+			var coord = win[i]
+			var x = coord[0]
+			var y = coord[1]
+
+			scenario[x][y] = this._TREASURE_GIF
+
 		}
 
 		return true;
@@ -505,6 +518,7 @@ var SokobanGame = React.createClass({
 			<div id='preload1'/>
 			<div id='preload2'/>
 			<div id='preload3'/>
+			<div id='preload4'/>
 				<div className='info'>
 					<span className='info_title'>Level: </span>
 					<span className='info_value'>{this.state.level}</span>
