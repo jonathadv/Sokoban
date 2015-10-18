@@ -1,5 +1,5 @@
 var superagent = require('superagent'),
-    URL = 'http://app3.daguerre.com.br/sokoban/score'
+    URL = 'http://app3.daguerre.com.br/rest/sokoban/score'
 
 
 
