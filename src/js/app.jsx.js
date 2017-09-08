@@ -1,5 +1,5 @@
 var React = require('react'),
-	Router = require('react-router'),
+    Router = require('react-router'),
     routes = require('./routes.jsx');
 
 
@@ -8,8 +8,5 @@ var React = require('react'),
 //React.render(<SokobanGame/>, document.getElementById('main'));
 
 Router.run(routes, function(Handler) {
-    React.render(
-        <Handler {...this.props} />,
-		document.getElementById('main')
-    );
+    React.render(<Handler {...this.props} />, document.getElementById('main'));
 });
