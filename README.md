@@ -1,4 +1,4 @@
-# Sokoban
+# React Sokoban
 
 Sokoban game based on KSokoban by Anders Widell.
 
